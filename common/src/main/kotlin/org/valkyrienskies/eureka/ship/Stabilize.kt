@@ -49,10 +49,7 @@ fun stabilize(
 
     val speed = ship.poseVel.vel.length()
 
-    val multiplierA = 1000f; // 1 kilo
-    val multiplierB = 0.271828; // e / 10
-
-    stabilizationTorque.mul(EurekaConfig.SERVER.stabilizationTorqueConstant / max(1.0, speed * speed * multiplierA / ship.inertia.shipMass + speed * multiplierB))
+    stabilizationTorque.mul(EurekaConfig.SERVER.stabilizationTorqueConstant / max(1.0, speed * speed * EurekaConfig.SERVER.scaledInstability / ship.inertia.shipMass + speed * EurekaConfig.SERVER.unscaledInstability))
     forces.applyInvariantTorque(stabilizationTorque)
 
     if (linear) {
