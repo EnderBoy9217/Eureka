@@ -6,6 +6,7 @@ import org.valkyrienskies.core.api.ships.PhysShip
 import org.valkyrienskies.core.impl.game.ships.PhysShipImpl
 import org.valkyrienskies.eureka.EurekaConfig
 import kotlin.math.atan
+import kotlin.math.max
 
 fun stabilize(
     ship: PhysShipImpl,
@@ -46,7 +47,12 @@ fun stabilize(
         )
     )
 
-    stabilizationTorque.mul(EurekaConfig.SERVER.stabilizationTorqueConstant)
+    val speed = ship.poseVel.vel.length()
+
+    val multiplierA = 1000f; // 1 kilo
+    val multiplierB = 0.271828; // e / 10
+
+    stabilizationTorque.mul(EurekaConfig.SERVER.stabilizationTorqueConstant / max(1.0, speed * speed * multiplierA / ship.inertia.shipMass + speed * multiplierB))
     forces.applyInvariantTorque(stabilizationTorque)
 
     if (linear) {
