@@ -20,6 +20,7 @@ import org.valkyrienskies.eureka.EurekaMod.initClient
 import org.valkyrienskies.eureka.block.WoodType
 import org.valkyrienskies.eureka.blockentity.renderer.ShipHelmBlockEntityRenderer
 import org.valkyrienskies.eureka.blockentity.renderer.WheelModels.setModelGetter
+import org.valkyrienskies.eureka.forge.registry.FuelRegistryImpl
 import org.valkyrienskies.mod.compat.clothconfig.VSClothConfig.createConfigScreenFor
 import thedarkcolour.kotlinforforge.forge.LOADING_CONTEXT
 import thedarkcolour.kotlinforforge.forge.MOD_BUS
@@ -55,6 +56,7 @@ class EurekaModForge {
                 )
             }
         }
+        FuelRegistryImpl()
         init()
     }
 
