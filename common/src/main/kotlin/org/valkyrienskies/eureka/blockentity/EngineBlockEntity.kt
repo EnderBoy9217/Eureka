@@ -14,9 +14,7 @@ import net.minecraft.world.entity.player.StackedContents
 import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.inventory.StackedContentsCompatible
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity
-import net.minecraft.world.level.block.entity.FurnaceBlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import org.joml.Math.lerp
 import org.joml.Math.min
@@ -25,6 +23,7 @@ import org.valkyrienskies.eureka.EurekaBlockEntities
 import org.valkyrienskies.eureka.EurekaConfig
 import org.valkyrienskies.eureka.EurekaProperties.HEAT
 import org.valkyrienskies.eureka.gui.engine.EngineScreenMenu
+import org.valkyrienskies.eureka.registry.FuelRegistry
 import org.valkyrienskies.eureka.ship.EurekaShipControl
 import org.valkyrienskies.eureka.util.KtContainerData
 import org.valkyrienskies.mod.common.getShipManagingPos
@@ -125,7 +124,8 @@ class EngineBlockEntity(pos: BlockPos, state: BlockState) :
      * @return scaled fuel ticks.
      */
     private fun getScaledFuel(): Int =
-        ((FurnaceBlockEntity.getFuel()[fuel.item] ?: 0) * EurekaConfig.SERVER.engineFuelMultiplier).toInt()
+        (FuelRegistry.INSTANCE.get(fuel) * EurekaConfig.SERVER.engineFuelMultiplier).toInt()
+
 
     /**
      * Absorb one fuel item into the engine.
@@ -223,10 +223,10 @@ class EngineBlockEntity(pos: BlockPos, state: BlockState) :
 
     override fun canTakeItemThroughFace(index: Int, stack: ItemStack, direction: Direction): Boolean =
         // Allow extraction from slot 0 (fuel slot) when the hopper is below the block entity
-        index == 0 && direction == Direction.DOWN && !fuel.isEmpty && !AbstractFurnaceBlockEntity.isFuel(fuel)
+        index == 0 && direction == Direction.DOWN && !fuel.isEmpty && FuelRegistry.INSTANCE.get(fuel) <= 0
 
     override fun canPlaceItem(index: Int, stack: ItemStack): Boolean =
-        index == 0 && AbstractFurnaceBlockEntity.isFuel(stack)
+        index == 0 && FuelRegistry.INSTANCE.get(stack) > 0
 
     override fun fillStackedContents(helper: StackedContents) = helper.accountStack(fuel)
     // endregion Container Stuff
