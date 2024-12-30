@@ -26,10 +26,14 @@ class BalloonBlock(properties: Properties) : Block(properties) {
         super.onPlace(state, level, pos, oldState, isMoving)
 
         if (level.isClientSide) return
-        level as ServerLevel
-
-        val ship = level.getShipObjectManagingPos(pos) ?: level.getShipManagingPos(pos) ?: return
-        EurekaShipControl.getOrCreate(ship).balloons += 1
+        val serverLevel = level as ServerLevel
+        
+        if (serverLevel.dimension() == Level.NETHER && EurekaConfig.SERVER.balloonsPopInNether) {
+            serverLevel.destroyBlock(pos, false)
+        } else {
+            val ship = level.getShipObjectManagingPos(pos) ?: level.getShipManagingPos(pos) ?: return
+            EurekaShipControl.getOrCreate(ship).balloons += 1
+        }
     }
 
     override fun onRemove(state: BlockState, level: Level, pos: BlockPos, newState: BlockState, isMoving: Boolean) {
