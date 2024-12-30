@@ -40,6 +40,12 @@ object EurekaConfig {
         @JsonSchema(description = "Flying ships require an active engine")
         val flightRequiresEngine = false
 
+        @JsonSchema(description = "Heat percentage the engine needs to be at to give balloons full power (Only if flying requires an engine)")
+        val flightEnginePercentage = 75
+
+        @JsonSchema(description = "Number of engines needed to give balloons full power at the Flight Engine Percentage")
+        val flightMaxEngines = 2
+
         @JsonSchema(description = "Avoids consuming fuel when heat is 100%")
         val engineFuelSaving = false
 
