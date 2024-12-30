@@ -27,13 +27,25 @@ class BalloonBlock(properties: Properties) : Block(properties) {
 
         if (level.isClientSide) return
         val serverLevel = level as ServerLevel
-        
-        if (serverLevel.dimension() == Level.NETHER && EurekaConfig.SERVER.balloonsPopInNether) {
+
+        val invalidDimensionsConfig = EurekaConfig.SERVER.balloonDimensionBlacklist
+        val invalidDimensionLocations = invalidDimensionsConfig.mapNotNull { dimensionString ->
+            try {
+                ResourceLocation(dimensionString)
+            } catch (e: Exception) {
+                logger.warn("Invalid dimension string: $dimensionString")
+                null
+            }
+        }.toSet()
+        val currentDimensionLocation = serverLevel.dimension().location()
+
+        if ( invalidDimensionLocations.contains(currentDimensionLocation) && EurekaConfig.SERVER.balloonsPopInNether ) {
             serverLevel.destroyBlock(pos, false)
         } else {
             val ship = level.getShipObjectManagingPos(pos) ?: level.getShipManagingPos(pos) ?: return
             EurekaShipControl.getOrCreate(ship).balloons += 1
         }
+        
     }
 
     override fun onRemove(state: BlockState, level: Level, pos: BlockPos, newState: BlockState, isMoving: Boolean) {
