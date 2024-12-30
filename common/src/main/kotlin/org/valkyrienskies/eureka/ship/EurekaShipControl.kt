@@ -305,7 +305,12 @@ class EurekaShipControl : ShipForcesInducer, ServerTickListener {
             physShip.mass * EurekaConfig.SERVER.linearMassScaling + EurekaConfig.SERVER.linearBaseMass
         )
 
-        val maxSpeed = EurekaConfig.SERVER.linearMaxSpeed / 15
+        // Max speed depends on ship type
+        var maxSpeed = EurekaConfig.SERVER.linearMaxAirSpeed / 15
+        if ( balloonForceProvided == 0.0 ) {
+            maxSpeed = EurekaConfig.SERVER.linearMaxWaterSpeed / 15
+        }
+        
         oldSpeed = max(min(oldSpeed * (1 - s) + control.forwardImpulse.toDouble() * s, maxSpeed), -maxSpeed)
         forwardVector.mul(oldSpeed)
 
@@ -321,8 +326,12 @@ class EurekaShipControl : ShipForcesInducer, ServerTickListener {
             val boost = max((extraForceLinear - EurekaConfig.SERVER.enginePowerLinear * EurekaConfig.SERVER.engineBoostOffset) * EurekaConfig.SERVER.engineBoost, 0.0)
             extraForceLinear += boost + boost * boost * EurekaConfig.SERVER.engineBoostExponentialPower
 
-            // This is the maximum speed we want to go in any scenario (when not sprinting)
-            val idealForwardVel = Vector3d(forwardVector).mul(EurekaConfig.SERVER.maxCasualSpeed)
+            // This is the maximum speed we want to go in any scenario (when not sprinting) based on ship type
+            var idealForwardVel = Vector3d(forwardVector).mul(EurekaConfig.SERVER.maxCasualAirSpeed)
+            if ( balloonForceProvided == 0.0 ) {
+                idealForwardVel = Vector3d(forwardVector).mul(EurekaConfig.SERVER.maxCasualWaterSpeed)
+            }
+            
             val idealForwardForce = Vector3d(idealForwardVel).sub(velOrthogonalToPlayerUp).mul(scaledMass)
 
             val extraForceNeeded = Vector3d(idealForwardForce).sub(forwardForce)
