@@ -40,7 +40,29 @@ class BalloonBlock(properties: Properties) : Block(properties) {
         val currentDimensionLocation = serverLevel.dimension().location()
 
         if ( invalidDimensionLocations.contains(currentDimensionLocation) && EurekaConfig.SERVER.balloonsPopInNether ) {
-            serverLevel.destroyBlock(pos, false)
+            // Replace the balloon block with air (Similar to how water is replaced in the Nether)
+            serverLevel.setBlock(pos, Blocks.AIR.defaultBlockState(), 3)
+
+            // Particles
+            serverLevel.sendParticles(
+                ParticleTypes.LARGE_SMOKE,
+                pos.x + 0.5, // Center of the block
+                pos.y + 0.0,
+                pos.z + 0.5,
+                15, // Number of particles per iteration
+                0.1, 0.1, 0.1, // Spread in x, y, z directions
+                0.01 // Speed multiplier
+            )
+
+            // Sounds
+            serverLevel.playSound(
+                null, // No specific player (plays for all nearby players)
+                pos,
+                SoundEvents.LAVA_EXTINGUISH, // Hiss-like sound
+                SoundSource.BLOCKS,
+                1.0f, // Volume
+                1.0f  // Pitch
+            )
         } else {
             val ship = level.getShipObjectManagingPos(pos) ?: level.getShipManagingPos(pos) ?: return
             EurekaShipControl.getOrCreate(ship).balloons += 1
