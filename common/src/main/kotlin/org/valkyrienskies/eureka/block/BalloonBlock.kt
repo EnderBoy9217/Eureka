@@ -15,6 +15,12 @@ import org.valkyrienskies.eureka.EurekaConfig
 import org.valkyrienskies.eureka.ship.EurekaShipControl
 import org.valkyrienskies.mod.common.getShipManagingPos
 import org.valkyrienskies.mod.common.getShipObjectManagingPos
+import org.valkyrienskies.mod.util.logger
+import net.minecraft.resources.ResourceLocation
+import net.minecraft.core.particles.ParticleTypes
+import net.minecraft.sounds.SoundEvents
+import net.minecraft.sounds.SoundSource
+import net.minecraft.world.level.block.Blocks
 
 class BalloonBlock(properties: Properties) : Block(properties) {
 
@@ -27,6 +33,9 @@ class BalloonBlock(properties: Properties) : Block(properties) {
 
         if (level.isClientSide) return
         val serverLevel = level as ServerLevel
+
+        val ship = level.getShipObjectManagingPos(pos) ?: level.getShipManagingPos(pos) ?: return
+        EurekaShipControl.getOrCreate(ship).balloons += 1
 
         val invalidDimensionsConfig = EurekaConfig.SERVER.balloonDimensionBlacklist
         val invalidDimensionLocations = invalidDimensionsConfig.mapNotNull { dimensionString ->
@@ -63,9 +72,6 @@ class BalloonBlock(properties: Properties) : Block(properties) {
                 1.0f, // Volume
                 1.0f  // Pitch
             )
-        } else {
-            val ship = level.getShipObjectManagingPos(pos) ?: level.getShipManagingPos(pos) ?: return
-            EurekaShipControl.getOrCreate(ship).balloons += 1
         }
         
     }
