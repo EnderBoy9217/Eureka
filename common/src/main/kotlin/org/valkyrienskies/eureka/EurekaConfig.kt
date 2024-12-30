@@ -55,8 +55,11 @@ object EurekaConfig {
         @JsonSchema(description = "The final linear boost will be raised to the power of 2, and the result of the delta is multiple by this value")
         val engineBoostExponentialPower = 0.000001
 
-        @JsonSchema(description = "Max speed of a ship without boosting")
-        val maxCasualSpeed = 15.0
+        @JsonSchema(description = "Max speed of a ship on water or lava without boosting")
+        val maxCasualWaterSpeed = 20.0
+
+        @JsonSchema(description = "Max speed of a flying ship without boosting")
+        val maxCasualAirSpeed = 15.0
 
         @JsonSchema(description = "The speed at which the ship stabilizes")
         var stabilizationSpeed = 10.0
@@ -106,9 +109,9 @@ object EurekaConfig {
 
         @JsonSchema(
             description = "The maximum distance from center of mass to one end of the ship considered by " +
-                "the turn speed. At it's default of 16, it ensures that really large ships will turn at the same " +
-                "speed as a ship with a center of mass only 16 blocks away from the farthest point in the ship. " +
-                "That way, large ships do not turn painfully slowly"
+                    "the turn speed. At it's default of 16, it ensures that really large ships will turn at the same " +
+                    "speed as a ship with a center of mass only 16 blocks away from the farthest point in the ship. " +
+                    "That way, large ships do not turn painfully slowly"
         )
         var maxSizeForTurnSpeedPenalty = 16.0
 
