@@ -97,10 +97,16 @@ class EurekaShipControl : ShipForcesInducer, ServerTickListener {
         val omega: Vector3dc = physShip.omega
         val vel: Vector3dc = physShip.velocity
 
-        var balloonForceProvided = 0.0
-        // Only calculate balloons if we have an active engine or if config is disabled
-        if (extraForceLinear != 0.0 || !EurekaConfig.SERVER.flightRequiresEngine) {
-            balloonForceProvided = balloons * forcePerBalloon
+        var balloonForceProvided = balloons * forcePerBalloon
+        if ( EurekaConfig.SERVER.flightRequiresEngine ) {
+            balloonForceProvided = if (extraForceLinear == 0.0) {
+                0.0 // Divide by 0 case
+            } else {
+                (balloons * forcePerBalloon) * min(
+                    1.0,
+                    (extraForceLinear / ( EurekaConfig.SERVER.enginePowerLinear * EurekaConfig.SERVER.flightMaxEngines ) ) * (100 / EurekaConfig.SERVER.flightEnginePercentage)
+                )
+            }
         }
 
         val buoyantFactorPerFloater = min(
@@ -341,9 +347,16 @@ class EurekaShipControl : ShipForcesInducer, ServerTickListener {
     private fun getPlayerUpwardVel(control: ControlData, mass: Double): Vector3d {
         if (control.upImpulse != 0.0f) {
 
-            var balloonForceProvided = 0.0
-            if (extraForceLinear != 0.0 || !EurekaConfig.SERVER.flightRequiresEngine) {
-                balloonForceProvided = balloons * forcePerBalloon
+            var balloonForceProvided = balloons * forcePerBalloon
+            if ( EurekaConfig.SERVER.flightRequiresEngine ) {
+                balloonForceProvided = if (extraForceLinear == 0.0) {
+                    0.0 // Divide by 0 case
+                } else {
+                    (balloons * forcePerBalloon) * min(
+                        1.0,
+                        (extraForceLinear / ( EurekaConfig.SERVER.enginePowerLinear * EurekaConfig.SERVER.flightMaxEngines ) ) * (100 / EurekaConfig.SERVER.flightEnginePercentage)
+                    )
+                }
             }
 
             return Vector3d(0.0, 1.0, 0.0)
