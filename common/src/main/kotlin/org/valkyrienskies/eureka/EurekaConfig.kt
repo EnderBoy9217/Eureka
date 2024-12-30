@@ -142,8 +142,11 @@ object EurekaConfig {
         @JsonSchema(description = "Max smoothing value, will smooth out before reaching max value.")
         var linearMaxMass = 10000.0
 
-        @JsonSchema(description = "Max unscaled speed in m/s.")
-        var linearMaxSpeed = 15.0
+        @JsonSchema(description = "Max unscaled speed for a flying ship in m/s.")
+        var linearMaxAirSpeed = 15.0
+
+        @JsonSchema(description = "Max unscaled speed for a ship floating in water/lava in m/s.")
+        var linearMaxWaterSpeed = 20.0
 
         // Anti-velocity mass relevance when stopping the ship
         // Max 10.0 (means no mass irrelevance)
