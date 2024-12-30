@@ -55,11 +55,11 @@ object EurekaConfig {
         @JsonSchema(description = "The final linear boost will be raised to the power of 2, and the result of the delta is multiple by this value")
         val engineBoostExponentialPower = 0.000001
 
-        @JsonSchema(description = "Max speed of a ship on water or lava without boosting")
-        val maxCasualWaterSpeed = 20.0
-
         @JsonSchema(description = "Max speed of a flying ship without boosting")
         val maxCasualAirSpeed = 15.0
+
+        @JsonSchema(description = "Max speed of a ship on water or lava without boosting")
+        val maxCasualWaterSpeed = 20.0
 
         @JsonSchema(description = "The speed at which the ship stabilizes")
         var stabilizationSpeed = 10.0
