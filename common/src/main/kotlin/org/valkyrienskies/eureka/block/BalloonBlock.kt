@@ -51,7 +51,6 @@ class BalloonBlock(properties: Properties) : Block(properties) {
         if ( invalidDimensionLocations.contains(currentDimensionLocation) && EurekaConfig.SERVER.balloonsPopInNether ) {
             // Replace the balloon block with air (Similar to how water is replaced in the Nether)
             serverLevel.setBlock(pos, Blocks.AIR.defaultBlockState(), 3)
-
             // Particles
             serverLevel.sendParticles(
                 ParticleTypes.LARGE_SMOKE,
@@ -62,7 +61,6 @@ class BalloonBlock(properties: Properties) : Block(properties) {
                 0.1, 0.1, 0.1, // Spread in x, y, z directions
                 0.01 // Speed multiplier
             )
-
             // Sounds
             serverLevel.playSound(
                 null, // No specific player (plays for all nearby players)
@@ -73,7 +71,6 @@ class BalloonBlock(properties: Properties) : Block(properties) {
                 1.0f  // Pitch
             )
         }
-        
     }
 
     override fun onRemove(state: BlockState, level: Level, pos: BlockPos, newState: BlockState, isMoving: Boolean) {
@@ -100,4 +97,6 @@ class BalloonBlock(properties: Properties) : Block(properties) {
             }
         }
     }
+
+    private val logger by logger()
 }
