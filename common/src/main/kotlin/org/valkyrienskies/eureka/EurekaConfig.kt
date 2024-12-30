@@ -151,6 +151,9 @@ object EurekaConfig {
         @JsonSchema(description = "Chance for popped balloons to pop adjacent balloons, per side")
         var popSideBalloonChance = 0.3
 
+        @JsonSchema(description = "Balloons pop immediately when placed in the Nether")
+        var balloonsPopInNether = false
+
         @JsonSchema(description = "Whether the ship helm assembles diagonally connected blocks or not")
         val diagonals = true
 
