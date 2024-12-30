@@ -34,8 +34,10 @@ class BalloonBlock(properties: Properties) : Block(properties) {
         if (level.isClientSide) return
         val serverLevel = level as ServerLevel
 
-        val ship = level.getShipObjectManagingPos(pos) ?: level.getShipManagingPos(pos) ?: return
-        EurekaShipControl.getOrCreate(ship).balloons += 1
+        val ship = level.getShipObjectManagingPos(pos) ?: level.getShipManagingPos(pos)
+        if (ship != null) {
+            EurekaShipControl.getOrCreate(ship).balloons += 1
+        }
 
         val invalidDimensionsConfig = EurekaConfig.SERVER.balloonDimensionBlacklist
         val invalidDimensionLocations = invalidDimensionsConfig.mapNotNull { dimensionString ->
