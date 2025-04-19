@@ -96,7 +96,18 @@ class EurekaShipControl : ShipForcesInducer, ServerTickListener {
         val moiTensor = physShip.momentOfInertia
         val omega: Vector3dc = physShip.omega
         val vel: Vector3dc = physShip.velocity
-        val balloonForceProvided = balloons * forcePerBalloon
+
+        var engineScaledBalloonForceProvided = balloons * forcePerBalloon
+        if ( EurekaConfig.SERVER.flightRequiresEngine ) {
+            engineScaledBalloonForceProvided = if (extraForceLinear == 0.0 || balloons == 0) {
+                0.0 // Prevent Divide by 0 case
+            } else {
+                engineScaledBalloonForceProvided * min(
+                    1.0,
+                    ( extraForceLinear * EurekaConfig.SERVER.maxBalloonsPerEngine ) / ( EurekaConfig.SERVER.enginePowerLinear * balloons )
+                )
+            }
+        }
 
         val buoyantFactorPerFloater = min(
             EurekaConfig.SERVER.floaterBuoyantFactorPerKg / 15.0 / mass,
@@ -200,7 +211,7 @@ class EurekaShipControl : ShipForcesInducer, ServerTickListener {
                 mass * EurekaConfig.SERVER.elevationSnappiness
 
         physShip.applyInvariantForce(Vector3d(0.0,
-            min(balloonForceProvided, max(idealUpwardForce, 0.0)) +
+            min(engineScaledBalloonForceProvided, max(idealUpwardForce, 0.0)) +
             // Add drag to the y-component
             vel.y() * -mass,
             0.0)
@@ -305,7 +316,24 @@ class EurekaShipControl : ShipForcesInducer, ServerTickListener {
             physShip.mass * EurekaConfig.SERVER.linearMassScaling + EurekaConfig.SERVER.linearBaseMass
         )
 
-        val maxSpeed = EurekaConfig.SERVER.linearMaxSpeed / 15
+        var engineScaledBalloonForceProvided = balloons * forcePerBalloon
+        if ( EurekaConfig.SERVER.flightRequiresEngine ) {
+            engineScaledBalloonForceProvided = if (extraForceLinear == 0.0 || balloons == 0) {
+                0.0 // Prevent Divide by 0 case
+            } else {
+                engineScaledBalloonForceProvided * min(
+                    1.0,
+                    ( extraForceLinear * EurekaConfig.SERVER.maxBalloonsPerEngine ) / ( EurekaConfig.SERVER.enginePowerLinear * balloons )
+                )
+            }
+        }
+
+        // Max speed depends on ship type
+        var maxSpeed = EurekaConfig.SERVER.linearMaxSpeed / 15
+        if ( engineScaledBalloonForceProvided != 0.0 ) {
+            maxSpeed *= EurekaConfig.SERVER.airSpeedMultiplier
+        }
+
         oldSpeed = max(min(oldSpeed * (1 - s) + control.forwardImpulse.toDouble() * s, maxSpeed), -maxSpeed)
         forwardVector.mul(oldSpeed)
 

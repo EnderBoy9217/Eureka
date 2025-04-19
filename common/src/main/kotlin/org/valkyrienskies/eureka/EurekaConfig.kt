@@ -25,20 +25,26 @@ object EurekaConfig {
         @JsonSchema(description = "Turning power per engine when minimal heat")
         val enginePowerAngularMin = 0.0f
 
-        @JsonSchema(description = "The amount of heat a engine loses per tick")
-        val engineHeatLoss = 0.01f
+        @JsonSchema(description = "The amount of heat an engine loses per tick")
+        val engineHeatLoss = 0.03f // CUSTOM - Default value increased from 0.01f
 
-        @JsonSchema(description = "The amount of heat a gain per tick (when burning)")
-        val engineHeatGain = 0.03f
+        @JsonSchema(description = "The amount of heat gained per tick (when burning)")
+        val engineHeatGain = 0.01f // CUSTOM - Default value decreased from 0.03f
 
         @JsonSchema(description = "Increases heat gained at low heat level, and increased heat decreases when at high heat and not consuming fuel")
         val engineHeatChangeExponent = 0.1f
 
         @JsonSchema(description = "Pause fuel consumption and power when block is powered")
-        val engineRedstoneBehaviorPause = false
+        val engineRedstoneBehaviorPause = true // CUSTOM - Default value changed from false
+
+        @JsonSchema(description = "Flying ships require an active engine")
+        val flightRequiresEngine = true // CUSTOM - Default value changed from false
+
+        @JsonSchema(description = "Number of Balloons a single engine can power")
+        val maxBalloonsPerEngine = 5
 
         @JsonSchema(description = "Avoids consuming fuel when heat is 100%")
-        val engineFuelSaving = false
+        val engineFuelSaving = true // CUSTOM - Default value changed from false
 
         @JsonSchema(description = "Increasing this value will result in more items being able to converted to fuel")
         val engineMinCapacity = 2000
@@ -55,8 +61,11 @@ object EurekaConfig {
         @JsonSchema(description = "The final linear boost will be raised to the power of 2, and the result of the delta is multiple by this value")
         val engineBoostExponentialPower = 0.000001
 
-        @JsonSchema(description = "Max speed of a ship without boosting")
-        val maxCasualSpeed = 15.0
+        @JsonSchema(description = "How the maximum speed of an airship should compare to one on water")
+        val airSpeedMultiplier = 0.75
+
+        @JsonSchema(description = "Max speed of a ship on water or lava without boosting")
+        val maxCasualSpeed = 25.0 // CUSTOM - Was 20.0
 
         @JsonSchema(description = "The speed at which the ship stabilizes")
         var stabilizationSpeed = 10.0
@@ -140,7 +149,7 @@ object EurekaConfig {
         var linearMaxMass = 10000.0
 
         @JsonSchema(description = "Max unscaled speed in m/s.")
-        var linearMaxSpeed = 15.0
+        var linearMaxSpeed = 25.0 // CUSTOM - Was 20.0
 
         // Anti-velocity mass relevance when stopping the ship
         // Max 10.0 (means no mass irrelevance)
@@ -150,6 +159,9 @@ object EurekaConfig {
         // Chance that if side will pop, its this chance per side
         @JsonSchema(description = "Chance for popped balloons to pop adjacent balloons, per side")
         var popSideBalloonChance = 0.3
+
+        @JsonSchema(description = "List of dimensions where balloons pop immediately, e.g: \"minecraft:the_nether\"")
+        var balloonDimensionBlacklist: Set<String> = setOf("minecraft:the_nether", "deeperdarker:otherside") // CUSTOM: Added default dimensions
 
         @JsonSchema(description = "Whether the ship helm assembles diagonally connected blocks or not")
         val diagonals = true
