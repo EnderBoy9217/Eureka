@@ -15,6 +15,5 @@ libs/
 classes/
 .metadata
 .vscode
-.settings
 *.launch
 *.log
